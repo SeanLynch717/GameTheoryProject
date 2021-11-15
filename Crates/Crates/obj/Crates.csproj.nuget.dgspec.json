@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\sdlga\\Desktop\\RIT Classes\\Fall 2021\\Game Theory\\Project\\Crates\\Crates\\Crates.csproj": {}
+    "C:\\Users\\sdlga\\Desktop\\RIT Classes\\Fall 2021\\Game Theory\\Project\\Code\\GameTheoryProject\\Crates\\Crates\\Crates.csproj": {}
   },
   "projects": {
-    "C:\\Users\\sdlga\\Desktop\\RIT Classes\\Fall 2021\\Game Theory\\Project\\Crates\\Crates\\Crates.csproj": {
+    "C:\\Users\\sdlga\\Desktop\\RIT Classes\\Fall 2021\\Game Theory\\Project\\Code\\GameTheoryProject\\Crates\\Crates\\Crates.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\sdlga\\Desktop\\RIT Classes\\Fall 2021\\Game Theory\\Project\\Crates\\Crates\\Crates.csproj",
+        "projectUniqueName": "C:\\Users\\sdlga\\Desktop\\RIT Classes\\Fall 2021\\Game Theory\\Project\\Code\\GameTheoryProject\\Crates\\Crates\\Crates.csproj",
         "projectName": "Crates",
-        "projectPath": "C:\\Users\\sdlga\\Desktop\\RIT Classes\\Fall 2021\\Game Theory\\Project\\Crates\\Crates\\Crates.csproj",
+        "projectPath": "C:\\Users\\sdlga\\Desktop\\RIT Classes\\Fall 2021\\Game Theory\\Project\\Code\\GameTheoryProject\\Crates\\Crates\\Crates.csproj",
         "packagesPath": "C:\\Users\\sdlga\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\sdlga\\Desktop\\RIT Classes\\Fall 2021\\Game Theory\\Project\\Crates\\Crates\\obj\\",
+        "outputPath": "C:\\Users\\sdlga\\Desktop\\RIT Classes\\Fall 2021\\Game Theory\\Project\\Code\\GameTheoryProject\\Crates\\Crates\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\sdlga\\AppData\\Roaming\\NuGet\\NuGet.Config",

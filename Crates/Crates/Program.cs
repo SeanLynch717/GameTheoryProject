@@ -1,350 +1,255 @@
-﻿using System;
+﻿ using System;
 using System.Collections.Generic;
 
 namespace Crates
 {
     class Program
     {
-        static bool[,] grid;
+        static Cell[,] grid;
+        static Cell p1Start = new Cell(new List<ItemType> { ItemType.Crate });
+        static Cell p2Start = new Cell(new List<ItemType> { ItemType.Guard, ItemType.End });
+        static Cell leftConveyer = new Cell(new List<ItemType> { ItemType.Conveyer }, Direction.Left);
+        static Cell rightConveyer = new Cell(new List<ItemType> { ItemType.Conveyer }, Direction.Right);
+        static Cell upConveyer = new Cell(new List<ItemType> { ItemType.Conveyer }, Direction.Up);
+        static Cell downConveyer = new Cell(new List<ItemType> { ItemType.Conveyer }, Direction.Down);
+        static Cell emptyCell = new Cell(new List<ItemType> { ItemType.None });
+        static Cell endZone = new Cell(new List<ItemType> { ItemType.End });
+
+        public static Dictionary<int, string> outcomeLookUp = new Dictionary<int, string>();
+
+
         static void Main(string[] args)
         {
-            grid = new bool[3,4];
-            GameState root = new GameState(grid, 0, 0);
-            Queue<GameState> queue = new Queue<GameState>();
-            queue.Enqueue(root);
+            List<Cell[,]> grids = new List<Cell[,]>();
 
-            GameState current;
-            int count = 0;
-            // Generate the entire game tree.
-            while (queue.Count > 0)
+            // Impartial Grids.
+            //grid = new Cell[,]{
+            //    { p1Start, emptyCell, emptyCell},
+            //    { emptyCell, emptyCell, emptyCell},
+            //    { emptyCell, emptyCell, endZone}
+            //};
+            //grids.Add(grid);
+
+            //grid = new Cell[,]{
+            //    {p1Start, endZone }
+            //};
+            //grids.Add(grid);
+
+            //grid = new Cell[,]{
+            //    {p1Start, emptyCell, endZone }
+            //};
+            //grids.Add(grid);
+
+            //grid = new Cell[,]{
+            //    {p1Start, emptyCell, emptyCell, endZone }
+            //};
+            //grids.Add(grid);
+
+            //grid = new Cell[,]{
+            //    {p1Start, emptyCell, emptyCell, emptyCell, endZone }
+            //};
+            //grids.Add(grid);
+
+            //grid = new Cell[,]{
+            //    {p1Start, emptyCell, emptyCell, emptyCell, emptyCell, endZone }
+            //};
+            //grids.Add(grid);
+
+            //grid = new Cell[,]{
+            //    {p1Start, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, endZone }
+            //};
+            //grids.Add(grid);
+
+            //grid = new Cell[,]{
+            //    {p1Start, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, endZone }
+            //};
+            //grids.Add(grid);
+
+            /*
+            grid = new Cell[,]{
+                {p1Start, emptyCell },
+                {emptyCell, endZone }
+            };
+            grids.Add(grid);
+
+            grid = new Cell[,]{
+                {p1Start, emptyCell, null },
+                {emptyCell, emptyCell, endZone }
+            };
+            grids.Add(grid);
+
+            grid = new Cell[,]{
+                {p1Start, emptyCell, emptyCell },
+                {emptyCell, emptyCell, endZone }
+            };
+            grids.Add(grid);
+
+            grid = new Cell[,]{
+                {p1Start, emptyCell, emptyCell, emptyCell },
+                {emptyCell, emptyCell, emptyCell, endZone }
+            };
+            grids.Add(grid);
+
+            */
+            //grid = new Cell[,]{
+            //    {p1Start, emptyCell, emptyCell },
+            //    {emptyCell, emptyCell, emptyCell },
+            //    {emptyCell, emptyCell, endZone }
+            //};
+            //grids.Add(grid);
+
+            //grid = new cell[,]{
+            //    {p1start, emptycell },
+            //    {emptycell, emptycell },
+            //    {null, endzone }
+            //};
+            //grids.add(grid);
+
+            //grid = new cell[,]{
+            //    {p1start, emptycell },
+            //    {emptycell, emptycell },
+            //    {emptycell, endzone }
+            //};
+            //grids.add(grid);
+
+            //grid = new Cell[,]{
+            //    {p1Start, emptyCell },
+            //    {emptyCell, emptyCell },
+            //    {emptyCell, emptyCell },
+            //    {emptyCell, endZone },
+            //};
+            //grids.Add(grid);
+
+
+            // Partizan Grids
+            grid = new Cell[,]{
+                { p1Start, emptyCell },
+                { emptyCell, p2Start }
+                };
+            grids.Add(grid);
+            //grid = new Cell[,]{
+            //   { p1Start, emptyCell, emptyCell },
+            //   { emptyCell, emptyCell, p2Start },
+            //};
+            //grid = new Cell[,]{
+            //    { p1Start, emptyCell, p2Start }
+            // };
+
+            // Loop through each game and solve it.
+            foreach (Cell[,] currentGrid in grids)
             {
-                count++;
-                // Get the next element from the queue.
-                current = queue.Dequeue();
-                // Console.WriteLine(current.GetRow() + "  " + current.GetCol());
-                // Generate all children of current.
-                current.GenerateChildren();
+                GameState root = new GameState(currentGrid, 0, 0, 2, 2);
+                Console.WriteLine("Starting configuration:\n");
+                root.Print();
+                Queue<GameState> queue = new Queue<GameState>();
+                queue.Enqueue(root);
 
-                // Enqueue each child of current
-                foreach(GameState g in current.GetLeftChildren())
+                GameState current;
+                int count = 0;
+                // Generate the entire game tree.
+                while (queue.Count > 0)
                 {
-                    queue.Enqueue(g);
+                    count++;
+                    // Get the next element from the queue.
+                    current = queue.Dequeue();
+
+                    // Generate all children of current.
+                    current.GenerateChildren();
+
+                    // Enqueue each child of current
+                    foreach (GameState g in current.GetLeftChildren())
+                    {
+                        queue.Enqueue(g);
+                    }
+                    foreach (GameState g in current.GetRightChildren())
+                    {
+                        queue.Enqueue(g);
+                    }
+
+                    if (count % 1000 == 0)
+                    {
+                        //Console.WriteLine((double)stached / count);
+                    }
                 }
-                foreach(GameState g in current.GetRightChildren())
+
+                //PrintPathsRecur(root, new List<GameState>());
+
+                if (root.impartial)
                 {
-                    queue.Enqueue(g);
+                    root.FindOutComeClassImpartial();
+                    Console.WriteLine("First Players Options");
+                    List<string> options = new List<string>();
+                    foreach(GameState g in root.GetLeftChildren())
+                    {
+                        options.Add(g.GetOutcomeClass());
+                        Console.Write("| ");
+                    }
+                    Console.WriteLine();
+                    foreach(string s in options)
+                    {
+                        Console.Write(s + " ");
+                    }
+
+                    Console.WriteLine("\n\nOutcome class: " + root.GetOutcomeClass() + "\n\n\n");
                 }
+                else
+                {
+                    root.FindOutComeClass();
+                    Console.WriteLine("Left:");
+                    foreach (GameState g in root.GetLeftChildren())
+                    {
+                        Console.Write(g.GetOutcomeClass() + " ");
+                    }
+                    Console.WriteLine("\n\nRight:");
+                    foreach (GameState g in root.GetRightChildren())
+                    {
+                        Console.Write(g.GetOutcomeClass() + " ");
+                    }
+
+                    Console.WriteLine("\n\nOutcome class: " + root.GetOutcomeClass() + "\n\n\n");
+                }
+
+                //outcomeLookUp = new Dictionary<int, string>();
             }
-            root.FindOutComeClass();
-            Console.WriteLine(count);
-            Console.WriteLine("Outcome class: " + root.GetOutcomeClass());    
         }
-    }
-
-
-    public class GameState
-    {
-        private bool[,] grid;
-        private int row;
-        private int col;
-        private string outcomeClass;
-        private List<GameState> leftChildren;
-        private List<GameState> rightChildren;
-
-        public GameState(bool[,] gridToCopy, int row, int col)
+        public static void PrintPathsRecur(GameState node, List<GameState> copypath)
         {
-            grid = new bool[gridToCopy.GetLength(0), gridToCopy.GetLength(1)];
-            for(int i = 0; i < gridToCopy.GetLength(0); i++)
+            List<GameState> path = new List<GameState>();
+            foreach(GameState g in copypath)
             {
-                for(int j = 0; j < gridToCopy.GetLength(1); j++)
-                {
-                    grid[i, j] = gridToCopy[i, j];
-                }
+                path.Add(g);
             }
-            this.row = row;
-            this.col = col;
-            grid[row, col] = true;
-            outcomeClass = "";
-            leftChildren = new List<GameState>();
-            rightChildren = new List<GameState>();
-        }
-        public void FindOutComeClass()
-        {
-            // Base case - no children so we know it's a p position.
-            if (leftChildren.Count == 0 && rightChildren.Count == 0)
+            /* append this node to the path array */
+            path.Add(node);
+
+            /* it's a leaf, so print the path that led to here  */
+            if (node.GetLeftChildren().Count == 0 && node.GetRightChildren().Count == 0)
             {
-                SetOutcomeClass("P");
-                return;
+                PrintArray(path);
             }
-
-            // Recursively solve for left children.
-            foreach(GameState g in leftChildren)
+            else
             {
-                g.FindOutComeClass();
-            }
-            // Recursively solve for right children.
-            foreach(GameState g in rightChildren)
-            {
-                g.FindOutComeClass();
-            }
-
-            // Now that we have the solution to both right and left, we can figure out what outcome class this position is.
-            bool someGLInLOrP = false;
-            foreach(GameState g in leftChildren)
-            {
-                if(g.GetOutcomeClass() == "L" || g.GetOutcomeClass() == "P")
+                /* otherwise try both subtrees */
+                foreach (GameState g in node.GetLeftChildren())
                 {
-                    someGLInLOrP = true;
-                    break;
+                    PrintPathsRecur(g, path);
                 }
-            }
-            bool someGRInROrP = false;
-            foreach (GameState g in rightChildren)
-            {
-                if (g.GetOutcomeClass() == "R" || g.GetOutcomeClass() == "P")
+                foreach (GameState g in node.GetRightChildren())
                 {
-                    someGRInROrP = true;
-                    break;
-                }
-            }
-            if(someGLInLOrP && someGRInROrP) { SetOutcomeClass("N"); }
-            else if(!someGLInLOrP && someGRInROrP) { SetOutcomeClass("R"); }
-            else if(someGLInLOrP && !someGRInROrP) { SetOutcomeClass("L"); }
-            else { SetOutcomeClass("P"); }
-        }
-
-        public void GenerateChildren()
-        {
-            // Generate left children.
-            GenerateLeftChildren();
-
-            // Generte right children.
-            GenerateRightChildren();
-        }
-
-        private void GenerateLeftChildren()
-        {
-            // Can think of rotation as corners of a bounding square.
-            for (int squareLength = 1; row >= squareLength || col >+ squareLength || grid.GetLength(0) - row >= squareLength || grid.GetLength(1) - col >= squareLength; squareLength++)
-            {
-                int newRow, newCol;
-                // Crate is in the bottom right of the square, and the rotation fits in the board.
-                if (row - squareLength >= 0 && col - squareLength >= 0)
-                {
-                    newRow = row - squareLength;
-                    newCol = col - squareLength;
-                    if (!grid[newRow, newCol])
-                    {
-                        GameState newLeftState = new GameState(grid, newRow, newCol);
-                        leftChildren.Add(newLeftState);             
-                    }
-
-                    newRow = row;
-                    if(!grid[newRow, newCol])
-                    {
-                        GameState newLeftState = new GameState(grid, newRow, newCol);
-                        leftChildren.Add(newLeftState);
-                    }
-
-                    newRow = row - squareLength;
-                    newCol = col;
-                    if (!grid[newRow, newCol])
-                    {
-                        GameState newLeftState = new GameState(grid, newRow, newCol);
-                        leftChildren.Add(newLeftState);
-                    }
-
-                }
-                // Crate is in the bottom left of the square, and the rotation fits in the board.
-                if (row - squareLength >= 0 && col + squareLength < grid.GetLength(1))
-                {
-                    newRow = row - squareLength;
-                    newCol = col + squareLength;
-                    if (!grid[newRow, newCol])
-                    {
-                        GameState newLeftState = new GameState(grid, newRow, newCol);
-                        leftChildren.Add(newLeftState);
-                    }
-
-                    newRow = row;
-                    if (!grid[newRow, newCol])
-                    {
-                        GameState newLeftState = new GameState(grid, newRow, newCol);
-                        leftChildren.Add(newLeftState);
-                    }
-
-                    newRow = row - squareLength;
-                    newCol = col;
-                    if (!grid[newRow, newCol])
-                    {
-                        GameState newLeftState = new GameState(grid, newRow, newCol);
-                        leftChildren.Add(newLeftState);
-                    }
-
-                }
-                // Crate is in the top right of the square, and the rotation fits in the board.
-                if (row + squareLength < grid.GetLength(0) && col - squareLength >= 0)
-                {
-                    newRow = row + squareLength;
-                    newCol = col - squareLength;
-                    if (!grid[newRow, newCol])
-                    {
-                        GameState newLeftState = new GameState(grid, newRow, newCol);
-                        leftChildren.Add(newLeftState);
-                    }
-
-                    newRow = row;
-                    if (!grid[newRow, newCol])
-                    {
-                        GameState newLeftState = new GameState(grid, newRow, newCol);
-                        leftChildren.Add(newLeftState);
-                    }
-
-                    newRow = row + squareLength;
-                    newCol = col;
-                    if (!grid[newRow, newCol])
-                    {
-                        GameState newLeftState = new GameState(grid, newRow, newCol);
-                        leftChildren.Add(newLeftState);
-                    }
-
-                }
-                // Crate is in the top left of the square, and the rotation fits in the board.
-                if (row + squareLength < grid.GetLength(0) && col + squareLength < grid.GetLength(1))
-                {
-                    newRow = row + squareLength;
-                    newCol = col + squareLength;
-                    if (!grid[newRow, newCol])
-                    {
-                        GameState newLeftState = new GameState(grid, newRow, newCol);
-                        leftChildren.Add(newLeftState);
-                    }
-
-                    newRow = row;
-                    if (!grid[newRow, newCol])
-                    {
-                        GameState newLeftState = new GameState(grid, newRow, newCol);
-                        leftChildren.Add(newLeftState);
-                    }
-
-                    newRow = row + squareLength;
-                    newCol = col;
-                    if (!grid[newRow, newCol])
-                    {
-                        GameState newLeftState = new GameState(grid, newRow, newCol);
-                        leftChildren.Add(newLeftState);
-                    }
-
+                    PrintPathsRecur(g, path);
                 }
             }
         }
-        private void GenerateLeftChildrenSimple()
-        {
-            if(row - 1 >= 0 && col - 1 >= 0 && !grid[row - 1, col - 1])
-            {
-                GameState newLeftState = new GameState(grid, row - 1, col - 1);
-                leftChildren.Add(newLeftState);
-            }
-            else if (row - 1 >= 0 && col + 1 < grid.GetLength(1) && !grid[row - 1, col + 1])
-            {
-                GameState newLeftState = new GameState(grid, row - 1, col + 1);
-                leftChildren.Add(newLeftState);
-            }
-            else if (row + 1 < grid.GetLength(0) && col - 1 >= 0 && !grid[row + 1, col - 1])
-            {
-                GameState newLeftState = new GameState(grid, row + 1, col - 1);
-                leftChildren.Add(newLeftState);
-            }
-            else if (row + 1 < grid.GetLength(0) && col + 1 < grid.GetLength(1) && !grid[row + 1, col + 1])
-            {
-                GameState newLeftState = new GameState(grid, row + 1, col + 1);
-                leftChildren.Add(newLeftState);
-            }
-        }
 
-        private void GenerateRightChildren()
+        public static void PrintArray(List<GameState> path)
         {
-            // All valid positions to the left of the square.
-            for (int j = col - 1; j >= 0 && !grid[row, j]; j--)
+            Console.WriteLine("New Path: ");
+            foreach(GameState g in path)
             {
-                GameState newRightState = new GameState(grid, row, j);
-                rightChildren.Add(newRightState);
+                Console.WriteLine(g.LastToMove);
+                g.Print();
             }
-            // All valid positions to the right of the square.
-            for (int j = col + 1; j < grid.GetLength(1) && !grid[row, j]; j++)
-            {
-                GameState newRightState = new GameState(grid, row, j);
-                rightChildren.Add(newRightState);
-            }
-            // All valid positions above the square.
-            for(int i = row - 1; i > 0 && !grid[i, col]; i--)
-            {
-                GameState newRightState = new GameState(grid, i, col);
-                rightChildren.Add(newRightState);
-            }
-            // All valid positions below the square.
-            for (int i = row + 1; i < grid.GetLength(0) && !grid[i, col]; i++)
-            {
-                GameState newRightState = new GameState(grid, i, col);
-                rightChildren.Add(newRightState);
-            }
-        }
-
-        public void GenerateRightChildrenSimple()
-        {
-            if(row - 1 >= 0 && !grid[row - 1, col])
-            {
-                GameState newRightState = new GameState(grid, row - 1, col);
-                rightChildren.Add(newRightState);
-            }
-            else if (row + 1 < grid.GetLength(0) && !grid[row + 1, col])
-            {
-                GameState newRightState = new GameState(grid, row + 1, col);
-                rightChildren.Add(newRightState);
-            }
-            if (col - 1 >= 0 && !grid[row, col - 1])
-            {
-                GameState newRightState = new GameState(grid, row, col - 1);
-                rightChildren.Add(newRightState);
-            }
-            if (col + 1 < grid.GetLength(1) && !grid[row, col + 1])
-            {
-                GameState newRightState = new GameState(grid, row, col + 1);
-                rightChildren.Add(newRightState);
-            }
-        }
-
-        public bool[,] GetGrid()
-        {
-            return grid;
-        }
-
-        public void SetOutcomeClass(string s)
-        {
-            outcomeClass = s;
-        }
-
-        public string GetOutcomeClass()
-        {
-            return outcomeClass;
-        }
-
-        public List<GameState> GetLeftChildren()
-        {
-            return leftChildren;
-        }
-
-        public List<GameState> GetRightChildren()
-        {
-            return rightChildren;
-        }
-        public int GetRow()
-        {
-            return row;
-        }
-        public int GetCol()
-        {
-            return col;
+            Console.WriteLine();
         }
     }
 }
